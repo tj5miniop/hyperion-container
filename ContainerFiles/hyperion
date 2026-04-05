@@ -8,6 +8,8 @@ LABEL usage="This image is a distrobox image designed for gaming with applicatio
 COPY ./files/pacman.conf /etc/pacman.conf
 COPY ./files/pacman.conf.chaotic /tmp/pacman.conf.chaotic
 
+
+USER root
 # System Setup Chaotic-Aur and Package Installation
 RUN pacman -Syyu --noconfirm && \
     pacman -S --noconfirm base-devel systemd git sudo && \
@@ -29,13 +31,18 @@ RUN pacman -Syyu --noconfirm && \
         paru heroic-games-launcher-bin faugus-launcher proton-cachyos \
         proton-cachyos-slr protonplus bottles gamescope-git mesa-tkg-git && \
     # 3. AUR Build Section (Requires non-root user)
-    useradd -m builduser && \
-    echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    sudo -u builduser bash -c ' \
-        cd ~ && \
-        paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
-        paru -Scc --noconfirm' && \
-    # 4. Cleanup
-    userdel -r builduser && \
-    sed -i '$d' /etc/sudoers && \
-    rm -rf /tmp/* /var/cache/pacman/pkg/*
+    useradd -m -G builduser wheel && \
+
+USER builduser
+RUN cd ~ && \
+      paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
+      paru -Scc --noconfirm' && \
+      
+USER root
+      userdel -r builduser && \
+      sed -i '$d' /etc/sudoers && \
+      rm -rf /tmp/* /var/cache/pacman/pkg/*
+
+
+# Switch back to root user
+USER root 
