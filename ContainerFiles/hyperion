@@ -45,7 +45,7 @@ RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     fish micro fastfetch distrobox podman
 
 # AUR Packages (paru)
-RUN yay -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
+RUN yay -S --noconfirm scopebuddy scopebuddy-gui-git goverlay-git && \
     yay -Scc --noconfirm
 
 # Cleanup
