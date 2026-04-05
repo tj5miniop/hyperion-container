@@ -34,20 +34,18 @@ RUN sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
     sudo pacman -Syyu --noconfirm --disable-sandbox
 
 # Package Installation
-RUN sudo pacman -S --noconfirm --disable-sandbox \
+RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
     xdg-desktop-portal-gamescope vulkan-intel vulkan-radeon vulkan-headers \
     lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
     flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
     heroic-games-launcher-bin faugus-launcher \
-    protonplus bottles gamescope-git \
+    protonplus bottles paru \
     fish micro fastfetch distrobox podman
 
 # AUR Packages (paru)
-RUN git clone https://aur.archlinux.org/paru-bin.git /tmp/paru-bin && \
-    cd /tmp/paru-bin && makepkg -si --noconfirm && \
-    paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
+RUN paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
     paru -Scc --noconfirm
 
 # Cleanup
