@@ -1,48 +1,69 @@
+
+FROM scratch AS ctx
+COPY ../shared/ /shared
+
 FROM ghcr.io/archlinux/archlinux:latest
 
-LABEL usage="This image is a distrobox image designed for gaming with applications such as steam, heroic, faugus and more preconfigured." \
+LABEL usage="This image is a distrobox image designed for gaming with steam, heroic, and more." \
       summary="Gaming Ready Arch Container with Chaotic AUR & Optimisations" \
       maintainer="tj5miniop@gmail.com"
 
-# Configuration Files
+# Config
+# Note: Ensure these files exist in your build directory
 COPY ./files/pacman.conf /etc/pacman.conf
 COPY ./files/pacman.conf.chaotic /tmp/pacman.conf.chaotic
 
-
 USER root
-# System Setup Chaotic-Aur and Package Installation
+
+# System Setup
 RUN pacman -Syyu --noconfirm && \
     pacman -S --noconfirm base-devel systemd git sudo && \
-    # Setup Chaotic AUR
+    # Setup Chaotic AUR Keys and Mirrorlist
     pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
     pacman-key --lsign-key 3056513887B78AEB && \
     pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
                          'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && \
-    # Apply pacman.conf
+    # Apply the Chaotic-enabled pacman.conf
     cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
-    pacman -Syyu --noconfirm && \
-    # Install standard and chaotic-aur packages
-    pacman -S --noconfirm \
-        jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
-        xdg-desktop-portal-gamescope vulkan-intel vulkan-radeon vulkan-headers \
-        lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
-        noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
-        flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
-        paru heroic-games-launcher-bin faugus-launcher proton-cachyos \
-        proton-cachyos-slr protonplus bottles gamescope-git mesa-tkg-git && \
-    # 3. AUR Build Section (Requires non-root user)
-    useradd -m -G builduser wheel && \
+    pacman -Syyu --noconfirm
+
+#  Package Installation
+RUN pacman -S --noconfirm \
+    # Display & Portals
+    jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
+    xdg-desktop-portal-gamescope \
+    # Drivers & Vulkan
+    vulkan-intel vulkan-radeon vulkan-headers lib32-vulkan-radeon lib32-vulkan-intel \
+    # Performance & Schedulers
+    mangohud scx-scheds scx-tools \
+    # Fonts & Media Codecs
+    noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
+    flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
+    # Launchers & Compatibility Layers
+    heroic-games-launcher-bin faugus-launcher proton-cachyos \
+    proton-cachyos-slr protonplus bottles gamescope-git mesa-tkg-git \
+    # CLI Tools
+    fish micro fastfetch distrobox podman
+
+# AUR Stuff
+# We create a temporary build user because makepkg cannot run as root
+RUN useradd -m -G wheel builduser && \
+    echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER builduser
-RUN cd ~ && \
-      paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
-      paru -Scc --noconfirm' && \
-      
+WORKDIR /tmp/paru
+RUN git clone https://aur.archlinux.org/paru.git . && \
+    makepkg -si --noconfirm && \
+    # Install specific AUR packages via paru
+    paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
+    paru -Scc --noconfirm
+
+# Cleanup
 USER root
-      userdel -r builduser && \
-      sed -i '$d' /etc/sudoers && \
-      rm -rf /tmp/* /var/cache/pacman/pkg/*
+RUN userdel -r builduser && \
+    sed -i '$d' /etc/sudoers && \
+    rm -rf /tmp/* /var/cache/pacman/pkg/*
 
-
-# Switch back to root user
-USER root 
+# Switch back to root for Distrobox compatibility
+USER root
+WORKDIR /
