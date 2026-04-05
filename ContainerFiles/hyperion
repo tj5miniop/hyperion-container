@@ -41,7 +41,7 @@ RUN sudo pacman -S --noconfirm --disable-sandbox \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
     flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
     heroic-games-launcher-bin faugus-launcher \
-    protonplus bottles gamescope-git mesa-tkg-git \
+    protonplus bottles gamescope-git \
     fish micro fastfetch distrobox podman
 
 # AUR Packages (paru)
