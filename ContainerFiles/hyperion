@@ -3,7 +3,7 @@ FROM scratch AS ctx
 COPY ../shared/ /shared
 
 FROM  ghcr.io/archlinux/archlinux:latest 
-      
+
 LABEL usage="This image is a distrobox image designed for gaming with steam, heroic, and more." \
       summary="Gaming Ready Arch Container with Chaotic AUR & Optimisations" \
       maintainer="tj5miniop@gmail.com"
@@ -13,26 +13,32 @@ LABEL usage="This image is a distrobox image designed for gaming with steam, her
 COPY ./files/pacman.conf /etc/pacman.conf
 COPY ./files/pacman.conf.chaotic /tmp/pacman.conf.chaotic
 
-# We create a temporary build user because makepkg cannot run as root
-RUN useradd -m -G wheel builduser && \
-    echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
+# Create build user - Credit to Universal Blue (https://github.com/ublue-os/toolboxes/blob/main/toolboxes/arch-toolbox/Containerfile.arch) 
+RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
+    printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | tee -a /etc/pacman.conf && \
+    sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc)"/g' /etc/makepkg.conf && \
+    pacman-key --init && pacman-key --populate && \
+    pacman -Syu --noconfirm && \
+    useradd -m --shell=/bin/bash build && usermod -L build && \
+    echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    pacman -S --clean --clean
 USER builduser
 
 # System Setup
-RUN sudo pacman -Syyu --noconfirm && \
-    sudo pacman -S --noconfirm base-devel systemd git sudo && \
+RUN pacman -Syyu --noconfirm && \
+      pacman -S --noconfirm base-devel systemd git sudo && \
     # Setup Chaotic AUR Keys and Mirrorlist
-    sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
-    sudo pacman-key --lsign-key 3056513887B78AEB && \
-    sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
+    pacman-key --lsign-key 3056513887B78AEB && \
+    pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
                          'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && \
     # Apply the Chaotic-enabled pacman.conf
-    sudo cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
-    sudo pacman -Syyu --noconfirm
+    cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
+    pacman -Syyu --noconfirm
 
 #  Package Installation
-RUN sudo pacman -S --noconfirm \
+RUN pacman -S --noconfirm \
     # Display & Portals
     jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
     xdg-desktop-portal-gamescope \
