@@ -11,4 +11,5 @@ COPY ../files/ /tmp
 
 # Run the setup scripts
 RUN chmod +x hyperion.sh
+RUN ./hyperion.sh
 RUN rm /hyperion.sh
