@@ -1,0 +1,14 @@
+FROM ghcr.io/archlinux/archlinux:latest
+
+LABEL usage="This image is a distrobox image designed for gaming with applications such as steam, heroic, faugus and more preconfigured. it also serves as a base for Hyperion (https://github.com/tj5miniop/hyperion)" \
+      summary="Gaming Ready Arch Container with Chaotic AUR & Optimisations" \
+      maintainer="tj5miniop@gmail.com"
+
+# Copy setup script
+COPY ../scripts/hyperion.sh /
+# COPY pacman.conf
+COPY ../files/ /tmp
+
+# Run the setup scripts
+RUN chmod +x hyperion.sh
+RUN rm /hyperion.sh
