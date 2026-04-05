@@ -7,7 +7,8 @@ LABEL usage="This image is a distrobox image designed for gaming with applicatio
 # Copy setup script
 COPY ../scripts/hyperion.sh /
 # COPY pacman.conf
-COPY ../files/ /tmp
+COPY ../files/pacman.conf /tmp
+COPY ../files/pacman.conf.chaotic /tmp
 
 # Run the setup scripts
 RUN chmod +x hyperion.sh
