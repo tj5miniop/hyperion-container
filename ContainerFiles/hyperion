@@ -41,12 +41,12 @@ RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
     flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
     heroic-games-launcher-bin faugus-launcher \
-    protonplus bottles paru \
+    protonplus bottles yay \
     fish micro fastfetch distrobox podman
 
 # AUR Packages (paru)
-RUN paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
-    paru -Scc --noconfirm
+RUN yay -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
+    yay -Scc --noconfirm
 
 # Cleanup
 USER root
