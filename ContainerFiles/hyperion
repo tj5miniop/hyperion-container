@@ -40,8 +40,8 @@ RUN sudo pacman -S --noconfirm --disable-sandbox \
     lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
     flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
-    heroic-games-launcher-bin faugus-launcher proton-cachyos \
-    proton-cachyos-slr protonplus bottles gamescope-git mesa-tkg-git \
+    heroic-games-launcher-bin faugus-launcher \
+    protonplus bottles gamescope-git mesa-tkg-git \
     fish micro fastfetch distrobox podman
 
 # AUR Packages (paru)
