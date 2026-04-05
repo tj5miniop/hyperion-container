@@ -1,16 +1,41 @@
 FROM ghcr.io/archlinux/archlinux:latest
 
-LABEL usage="This image is a distrobox image designed for gaming with applications such as steam, heroic, faugus and more preconfigured. it also serves as a base for Hyperion (https://github.com/tj5miniop/hyperion)" \
+LABEL usage="This image is a distrobox image designed for gaming with applications such as steam, heroic, faugus and more preconfigured." \
       summary="Gaming Ready Arch Container with Chaotic AUR & Optimisations" \
       maintainer="tj5miniop@gmail.com"
 
-# Copy setup script
-COPY ../scripts/hyperion.sh /
-# COPY pacman.conf
-COPY ../files/pacman.conf /tmp
-COPY ../files/pacman.conf.chaotic /tmp
+# Configuration Files
+COPY ./files/pacman.conf /etc/pacman.conf
+COPY ./files/pacman.conf.chaotic /tmp/pacman.conf.chaotic
 
-# Run the setup scripts
-RUN chmod +x hyperion.sh
-RUN ./hyperion.sh
-RUN rm /hyperion.sh
+# System Setup Chaotic-Aur and Package Installation
+RUN pacman -Syyu --noconfirm && \
+    pacman -S --noconfirm base-devel systemd git sudo && \
+    # Setup Chaotic AUR
+    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
+    pacman-key --lsign-key 3056513887B78AEB && \
+    pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+                         'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && \
+    # Apply pacman.conf
+    cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
+    pacman -Syyu --noconfirm && \
+    # Install standard and chaotic-aur packages
+    pacman -S --noconfirm \
+        jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
+        xdg-desktop-portal-gamescope vulkan-intel vulkan-radeon vulkan-headers \
+        lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
+        noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
+        flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
+        paru heroic-games-launcher-bin faugus-launcher proton-cachyos \
+        proton-cachyos-slr protonplus bottles gamescope-git mesa-tkg-git && \
+    # 3. AUR Build Section (Requires non-root user)
+    useradd -m builduser && \
+    echo "builduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    sudo -u builduser bash -c ' \
+        cd ~ && \
+        paru -S --noconfirm scopebuddy scopebuddy-gui-git ds-inhibit goverlay-git && \
+        paru -Scc --noconfirm' && \
+    # 4. Cleanup
+    userdel -r builduser && \
+    sed -i '$d' /etc/sudoers && \
+    rm -rf /tmp/* /var/cache/pacman/pkg/*
