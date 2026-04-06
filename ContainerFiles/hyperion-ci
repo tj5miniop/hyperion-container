@@ -1,7 +1,7 @@
 FROM scratch AS ctx
 COPY ../shared/ /shared
 
-FROM ghcr.io/archlinux/archlinux:latest
+FROM ghcr.io/archlinux/archlinux:latest as hyperion-ci
 
 LABEL usage="This image is a distrobox image designed for gaming with steam, heroic, and more." \
       summary="Gaming Ready Arch Container with Chaotic AUR & Optimisations" \
