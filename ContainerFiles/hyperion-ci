@@ -53,8 +53,6 @@ RUN yay -S --noconfirm scopebuddy scopebuddy-gui-git goverlay-git && \
 # Cleanup
 USER root
 RUN userdel -r build && \
-    # Remove the specific line we added to sudoers
-    sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
     rm -rf /tmp/* /var/cache/pacman/pkg/*
 
 WORKDIR /
