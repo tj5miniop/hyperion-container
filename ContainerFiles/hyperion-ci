@@ -25,6 +25,8 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
 USER build
 WORKDIR /tmp
 
+
+# CHAOTIC-AUR setup 
 RUN sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
     sudo pacman-key --lsign-key 3056513887B78AEB && \
     sudo pacman -U --noconfirm --disable-sandbox \
@@ -33,10 +35,11 @@ RUN sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
     sudo cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
     sudo pacman -Syyu --noconfirm --disable-sandbox
 
-# Package Installation
+# Package Installation - NOTE - this installs the xdg-desktop-portal-kde, this will be removed from all NON-KDE desktop releases of hyperion.
+# NOTE - this is a standard arch install, just tweaked so you can just install whatever you want 
 RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
-    xdg-desktop-portal-gamescope vulkan-intel vulkan-radeon vulkan-headers \
+    xdg-desktop-portal-gamescope vulkan-intel intel-media-drivet vulkan-radeon vulkan-headers \
     lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
     flac ffmpeg wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
@@ -44,7 +47,7 @@ RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     protonplus bottles yay \
     fish micro fastfetch distrobox podman
 
-# AUR Packages (paru)
+# AUR Packages (yay)
 RUN yay -S --noconfirm scopebuddy scopebuddy-gui-git goverlay-git && \
     yay -Scc --noconfirm
 
