@@ -17,8 +17,8 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
     sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc)"/g' /etc/makepkg.conf && \
     pacman-key --init && pacman-key --populate && \
     pacman -Syu --noconfirm --disable-sandbox && \
-    useradd -m -G --shell=/bin/bash build wheel && \
-    pacman -S --noconfirm --needed base-devel git sudo --disable-sandbox
+    useradd -m -G --shell=/bin/bash wheel build && \
+    pacman -S --noconfirm --needed base-devel git --disable-sandbox
 
 # Setup
 USER build
