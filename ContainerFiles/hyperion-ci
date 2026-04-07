@@ -39,7 +39,7 @@ RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     xdg-desktop-portal-gamescope vulkan-intel vulkan-radeon vulkan-headers \
     lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
-    flac wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
+    flac ffmpeg wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
     heroic-games-launcher-bin faugus-launcher \
     protonplus bottles yay \
     fish micro fastfetch distrobox podman
