@@ -20,23 +20,20 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
     useradd -m -g wheel build && \
     pacman -S --noconfirm --needed base-devel git --disable-sandbox
 
-# Setup
-USER build
-WORKDIR /tmp
 
-
+USER root 
 # CHAOTIC-AUR setup 
-RUN sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
-    sudo pacman-key --lsign-key 3056513887B78AEB && \
-    sudo pacman -U --noconfirm --disable-sandbox \
+RUN pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
+    pacman-key --lsign-key 3056513887B78AEB && \
+    pacman -U --noconfirm --disable-sandbox \
         'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
         'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && \
-    sudo cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
-    sudo pacman -Syyu --noconfirm --disable-sandbox
+    cp /tmp/pacman.conf.chaotic /etc/pacman.conf && \
+    pacman -Syyu --noconfirm --disable-sandbox
 
 # Package Installation - NOTE - this installs the xdg-desktop-portal-kde, this will be removed from all NON-KDE desktop releases of hyperion.
 # NOTE - this is a standard arch install, just tweaked so you can just install whatever you want 
-RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
+RUN pacman -S --noconfirm --needed --disable-sandbox \
     jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
     xdg-desktop-portal-gamescope vulkan-intel intel-media-driver vulkan-radeon vulkan-headers \
     lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
@@ -45,6 +42,10 @@ RUN sudo pacman -S --noconfirm --needed --disable-sandbox \
     heroic-games-launcher-bin faugus-launcher \
     protonplus bottles yay \
     fish micro fastfetch distrobox podman
+
+# Setup
+USER build
+WORKDIR /tmp
 
 # AUR Packages (yay)
 RUN yay -S --noconfirm scopebuddy scopebuddy-gui-git goverlay-git && \
