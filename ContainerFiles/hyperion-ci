@@ -11,6 +11,7 @@ LABEL usage="This image is a distrobox image designed for gaming with steam, her
 # We copy the pacman.conf early
 COPY ./files/pacman.conf /etc/pacman.conf
 COPY ./files/pacman.conf.chaotic /tmp/pacman.conf.chaotic
+COPY ./files/rootfs/etc/os-release /etc/os-release
 
 # 2. Fix ALPM Sandboxing & Setup User
 RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \

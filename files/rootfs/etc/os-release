@@ -1,0 +1,7 @@
+NAME="Hyperion (Alpha Testing)/Arch Linux"
+PRETTY_NAME="Hyperion"
+ID=Hyperion
+ID_LIKE=arch
+BUILD_ID=rolling
+VERSION_ID=0.1
+HOME_URL="https://cachyos.org/"
