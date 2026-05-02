@@ -3,7 +3,7 @@ COPY ../shared/ /shared
 
 FROM ghcr.io/archlinux/archlinux:latest as hyperion-ci
 
-LABEL usage="This image is a distrobox image designed for gaming with steam, heroic, and more." \
+LABEL usage="This image is a distrobox image designed for gaming with steam, heroic, and more. - I currently use this under NixOS as my gaming environment" \
       summary="Gaming Ready Arch Container with Chaotic AUR & Optimisations" \
       maintainer="tj5miniop@gmail.com"
 
@@ -36,11 +36,10 @@ RUN pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && \
 # NOTE - this is a standard arch install, just tweaked so you can just install whatever you want 
 RUN pacman -S --noconfirm --needed --disable-sandbox \
     jupiter-main/gamescope steam xdg-desktop-portal xdg-desktop-portal-kde \
-    xdg-desktop-portal-gamescope vulkan-intel intel-media-driver vulkan-radeon vulkan-headers \
+    xdg-desktop-portal-gamescope vulkan-intel intel-media-driver vulkan-radeon vulkan-headers nvidia-utils \
     lib32-vulkan-radeon lib32-vulkan-intel mangohud scx-scheds scx-tools \
     noto-fonts ttf-dejavu ttf-liberation noto-fonts-emoji noto-fonts-cjk \
-    flac ffmpeg wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 \
-    heroic-games-launcher-bin faugus-launcher \
+    flac ffmpeg wavpack lame libmad faac libwebp libavif libheif libjxl aom libde265 x264 fuse \
     protonplus bottles yay \
     fish micro fastfetch distrobox podman
 
